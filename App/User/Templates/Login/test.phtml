@@ -1,0 +1,13 @@
+<?php
+/** @var User_Model_Base $user */
+$user = $this->user;
+?>
+
+<? if($user):?>
+<div>
+    #<span class="id"><?=$user->getId();?></span><br>
+    <span class="name"><?=$user->getName();?></span><br>
+</div>
+<? else:?>
+    Пользователь не найден
+<? endif;?>
