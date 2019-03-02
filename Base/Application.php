@@ -8,6 +8,8 @@ class Application
     private $_context;
     /** @var Request */
     private $_request;
+    /** @var Dispatcher */
+    private $_dispatcher;
 
     public function __construct($config)
     {
@@ -36,18 +38,19 @@ class Application
             $this->_request->handle();
 
             // это диспетчер, он занимается обработкой запроса и получением нужного контроллера
-            $dispatcher = new Dispatcher();
-            $dispatcher->dispatch();
+            $this->_dispatcher = new Dispatcher();
+            $this->_context->setDispatcher($this->_dispatcher);
+            $this->_dispatcher->dispatch();
 
             // просим диспетчер создать нам объект контроллера
-            $controller = $dispatcher->getController();
+            $controller = $this->_dispatcher->getController();
 
             // получаем от диспетчера имя вызванного экшена
-            $action = $dispatcher->getActionName();
+            $action = $this->_dispatcher->getActionName() . 'Action';
 
             // проверяем существование метода
             if (!method_exists($controller, $action)) {
-                throw new \Exception(
+                throw new DispatchException(
                     'Action ' . $action . ' not found in controller '
                     . $this->_request->getRequestController()
                 );
@@ -69,6 +72,9 @@ class Application
                 echo $content;
             }
 
+        } catch (DispatchException $e) {
+            $e->process();
+            // обработка исключений в диспетчере
         } catch (\Exception $e) {
             echo 'Произошло исключение: ' . $e->getMessage();
             // обработка исключений самого базового уровня - редирект на 404.html
@@ -77,11 +83,11 @@ class Application
 
     private function _getDefaultTemplatePath()
     {
-        return ucfirst($this->_request->getRequestModule())
+        return ucfirst($this->_dispatcher->getModuleName())
             . DIRECTORY_SEPARATOR
             . 'Templates'
             . DIRECTORY_SEPARATOR
-            . ucfirst($this->_request->getRequestController());
+            . ucfirst($this->_dispatcher->getControllerName());
     }
 
 }

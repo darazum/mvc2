@@ -52,7 +52,7 @@ class View
             $loader = new \Twig\Loader\FilesystemLoader($path);
             $this->_twig = new \Twig\Environment(
                 $loader,
-                [/*'cache' => $path . 'cache'*/]
+                ['cache' => $path . '_cache']
             );
         }
 

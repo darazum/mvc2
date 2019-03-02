@@ -3,10 +3,6 @@ namespace Base;
 
 class Request
 {
-    const DEFAULT_MODULE = 'Main';
-    const DEFAULT_CONTROLLER = 'Index';
-    const DEFAULT_ACTION = 'Index';
-
     private $_requestModule;
     private $_requestController;
     private $_requestAction;
@@ -29,21 +25,20 @@ class Request
     public function handle()
     {
         $parts = explode('/', $this->_requestUri);
-
-        if (!$parts || sizeof($parts) < 2) {
-            $this->_requestModule = self::DEFAULT_MODULE;
-            $this->_requestController = self::DEFAULT_CONTROLLER;
-            $this->_requestAction = self::DEFAULT_ACTION;
+        if (!$parts || sizeof($parts) < 1) {
+            $this->_requestModule = false;
+            $this->_requestController = false;
+            $this->_requestAction = false;
         } else {
             foreach ($parts as $k => $part) {
-                if (!$this->validate($part)) {
-                    throw new \Exception('Url part #' . $k . ' not valid: ' . $part);
+                if ($part && !$this->validate($part)) {
+                    throw new DispatchException('Url part #' . $k . ' not valid: ' . $part);
                 }
             }
 
-            $this->_requestModule = $parts[0] ?? self::DEFAULT_MODULE;
-            $this->_requestController = $parts[1] ?? self::DEFAULT_CONTROLLER;
-            $this->_requestAction = $parts[2] ?? self::DEFAULT_ACTION;
+            $this->_requestModule = !empty($parts[0]) ? $parts[0] : false;
+            $this->_requestController = !empty($parts[1]) ? $parts[1] : false;
+            $this->_requestAction = !empty($parts[2]) ? $parts[2] : false;
         }
     }
 

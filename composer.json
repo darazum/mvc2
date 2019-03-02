@@ -4,9 +4,10 @@
     "swiftmailer/swiftmailer": "^6.0",
     "phpmailer/phpmailer": "^6.0",
     "twig/twig":"^2.0",
-    "symfony/dom-crawler":"^2.0",
+    "symfony/dom-crawler":"dev-master",
     "symfony/filesystem":"^3.4",
-    "nesbot/carbon":"^1.8"
+    "nesbot/carbon":"dev-master",
+    "symfony/css-selector":"dev-master"
   },
 
   "autoload": {

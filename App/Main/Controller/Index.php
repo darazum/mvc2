@@ -21,6 +21,10 @@ class Index extends \Base\ControllerAbstract
 //        echo 'Запрошенный модуль: ' . $context->getRequest()->getRequestModule() . '<br>';
 //        echo 'Запрошенный контроллер: ' . $context->getRequest()->getRequestController() . '<br>';
 //        echo 'Запрошенный экшен: ' . $context->getRequest()->getRequestAction() . '<br><br><br>';
+//        echo '<br>';
+//        echo 'Вызванный модуль: ' . $context->getDispatcher()->getModuleName() . '<br>';
+//        echo 'Вызванный контроллер: ' . $context->getDispatcher()->getControllerName() . '<br>';
+//        echo 'Вызванный экшен: ' . $context->getDispatcher()->getActionName() . '<br><br><br>';
 
         $this->view->setRenderType(View::RENDER_TYPE_TWIG);
         $this->view->users = [
@@ -29,24 +33,31 @@ class Index extends \Base\ControllerAbstract
             ['name' => 'Petja3']
         ];
         $this->view->var = '<b>Ololo</b>';
-        $this->tpl = 'index.twig';
     }
 
     public function parserAction()
     {
         $this->noRender();
 
-        $html = file_get_contents("../kinopoisk.html");
+//        $html = file_get_contents("../kinopoisk.html");
+//        $crawler = new Crawler($html);
+//        $parsed = $crawler->filterXPath('//table/tr');
+//        // $crawler->filter('.class .subclass'); // jquery style with php 7.2 and crawler 4.2
+//        echo '<pre>';
+//        foreach ($parsed as $item) {
+//            /** @var DOMElement $item */
+//            $a = $item->getElementsByTagName('a')[1];
+//            if ($a) {
+//                echo $a->getAttribute('href') . '<br>';
+//            }
+//        }
+
+        $html = file_get_contents('https://www.anekdot.ru/');
         $crawler = new Crawler($html);
-        $parsed = $crawler->filterXPath('//table/tr');
-        // $crawler->filter('.class .subclass'); // jquery style with php 7.2 and crawler 4.2
-        echo '<pre>';
+        $parsed = $crawler->filter('.texts .text');
+        /** @var \DOMElement $item */
         foreach ($parsed as $item) {
-            /** @var DOMElement $item */
-            $a = $item->getElementsByTagName('a')[1];
-            if ($a) {
-                echo $a->getAttribute('href') . '<br>';
-            }
+            echo $item->textContent . '<br>';
         }
     }
 
@@ -72,14 +83,13 @@ class Index extends \Base\ControllerAbstract
     {
         $this->noRender();
 
-
         $oldTime = Carbon::now();
-        $oldTime->subDay(3)->subHour(3);
+        $oldTime->subDay(3)->subHour(3)->subMinute(13);
         $curTime = Carbon::now();
 
         Carbon::setLocale('ru');
 
-        echo $oldTime->diffForHumans($curTime) . '<br>';
+        echo $oldTime->diffForHumans($curTime, null, false, 3) . '<br>';
 
         $futureTime = Carbon::parse(date('Y-m-d H:i:s', time() + 86400 + 2*3600 + 156));
         echo $futureTime->diffForHumans($curTime, true, false, 4);

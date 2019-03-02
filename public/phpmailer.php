@@ -1,11 +1,12 @@
 <?php
+
+//Load Composer's autoloader
+require '../vendor/autoload.php';
+
 // Import PHPMailer classes into the global namespace
 // These must be at the top of your script, not inside a function
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
-
-//Load Composer's autoloader
-require '../vendor/autoload.php';
 
 $mail = new PHPMailer(true);                              // Passing `true` enables exceptions
 try {
@@ -36,8 +37,9 @@ try {
     $mail->Body    = 'This is the HTML message body <b>in bold!</b>';
     $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
 
-    $mail->send();
-    echo 'Message has been sent';
+    $ret = $mail->send();
+    echo 'Message send result:<br>';
+    var_dump($ret);
 } catch (Exception $e) {
     echo '<pre>' . print_r($e->getTrace(), 1);
     echo 'Message could not be sent. Mailer Error: ', $mail->ErrorInfo;

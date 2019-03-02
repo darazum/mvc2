@@ -4,6 +4,8 @@ namespace Base;
 class Context
 {
     private $_request;
+    
+    private $_dispatcher;
 
     private $_user;
 
@@ -39,9 +41,25 @@ class Context
     /**
      * @param mixed $request
      */
-    public function setRequest($request)
+    public function setRequest(Request $request)
     {
         $this->_request = $request;
+    }
+    
+    /**
+     * @return \Base\Dispatcher
+     */
+    public function getDispatcher()
+    {
+        return $this->_dispatcher;
+    }
+
+    /**
+     * @param mixed $dispatcher
+     */
+    public function setDispatcher(Dispatcher $dispatcher)
+    {
+        $this->_dispatcher = $dispatcher;
     }
 
     /**

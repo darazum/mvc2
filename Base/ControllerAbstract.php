@@ -14,7 +14,6 @@ class ControllerAbstract
         $request = Context::getInstance()->getRequest();
         $this->tpl = strtolower($request->getRequestAction()) . '.phtml';
 
-        session_start();
         if (isset($_SESSION['user_id'])) {
             $userModel = User_Model_DB::getModelById($_SESSION['user_id']);
             $this->view->user = $userModel;
