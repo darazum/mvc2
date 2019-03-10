@@ -39,7 +39,10 @@ class View
 
     public function __get($name)
     {
-        return $this->$name;
+        if (isset($this->_data[$name])) {
+            return $this->_data[$name];
+        }
+        return '';
     }
 
     /**

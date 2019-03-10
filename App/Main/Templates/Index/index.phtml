@@ -1,2 +1,41 @@
-Мы попали в шаблон лежащий по пути
-<?= $this->asdsa ;?>
+<?php
+/** @var \App\Main\Model\Post[] $posts */
+$posts = $this->posts;
+/** @var \App\User\Model\Base[] $users */
+$users = $this->users;
+?>
+
+
+<? foreach ($posts as $post): ?>
+    <? $user = $users[$post->getUserId()] ?? false; ?>
+    <? if(!$user) { continue; } ?>
+    <div class="post">
+        <span class="user">Сообщеие от <b><?=$user->getName();?></b> отправлено <?=$post->getCreatedAt();?></span>
+        <div class="message"><?=$post->getText();?></div>
+    </div>
+<? endforeach;?>
+
+<br>
+<br>
+<form action="/main/index/sendPost/" method="post">
+    Message:<br>
+    <textarea name="text" style="width: 250px; height: 100px;"></textarea><br>
+    <input type="submit" value="Send">
+</form>
+
+<style>
+    .post {
+        border: 1px solid grey;
+        margin-top: 10px;
+        padding: 5px;
+        width: 250px;
+    }
+    .user {
+        color: grey;
+        font-size: 11px;
+    }
+    .message {
+        margin-top: 5px;
+        padding-left: 5px;
+    }
+</style>

@@ -1,5 +1,7 @@
 <?php
 namespace Base;
+use App\User\Model\Base as UserModelBase;
+
 class ControllerAbstract
 {
     public $tpl;
@@ -7,17 +9,19 @@ class ControllerAbstract
     /** @var View */
     public $view;
 
+    /** @var UserModelBase */
+    protected $USER;
+
     public $_noRender = false;
 
     function __construct()
     {
         $request = Context::getInstance()->getRequest();
         $this->tpl = strtolower($request->getRequestAction()) . '.phtml';
+    }
 
-        if (isset($_SESSION['user_id'])) {
-            $userModel = User_Model_DB::getModelById($_SESSION['user_id']);
-            $this->view->user = $userModel;
-        }
+    public function preAction()
+    {
     }
 
     public function noRender()
@@ -28,5 +32,23 @@ class ControllerAbstract
     public function needRender(): bool
     {
         return !$this->_noRender;
+    }
+
+    public function setUser(UserModelBase $user)
+    {
+        $this->USER = $user;
+    }
+
+    /**
+     * @throws RedirectException
+     */
+    protected function redirect(string $location)
+    {
+        throw new RedirectException($location);
+    }
+
+    public function p(string $key)
+    {
+        return htmlspecialchars($_REQUEST[$key] ?? '');
     }
 }

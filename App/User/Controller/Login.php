@@ -3,19 +3,62 @@
 namespace App\User\Controller;
 
 use Base\ControllerAbstract as ControllerAbstract;
-use App\User\Model as UserModel;
+use App\User\Model\Base as UserModel;
+use Base\Exception;
 
 class Login extends ControllerAbstract
 {
-    function mainAction()
+    public function registerAction()
     {
-        echo 'We are here';
     }
 
-    function testAction()
+    /**
+     * @throws \Base\RedirectException
+     */
+    public function createUserAction()
     {
-        $userModel = UserModel\DB::getModelById(1);
-        UserModel\DB::saveUser($userModel);
-        $this->view->user = $userModel;
+        $name = $this->p('name');
+        $password = $this->p('password');
+
+        $user = new UserModel();
+        $user->initByData([
+            'name' => $name,
+            'password' => $password,
+        ]);
+
+        $user->saveToDb();
+        $this->redirect('/');
     }
+
+    public function loginAction()
+    {
+
+        $name = $this->p('name');
+        $password = $this->p('password');
+
+        $user = new UserModel();
+        $user->initByData([
+            'name' => $name,
+            'password' => $password,
+        ]);
+
+        try {
+            $success = $user->authorize();
+            if (!$success) {
+                $error = 'Wrong login or password';
+            }
+        } catch (Exception $e) {
+            $error = 'Sever error';
+            trigger_error($e->getMessage());
+            $success = false;
+        }
+
+        if ($success) {
+            $this->redirect('/');
+        } else {
+            $this->view->error = $error;
+            $this->tpl = 'register.phtml';
+        }
+    }
+
 }

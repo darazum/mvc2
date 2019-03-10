@@ -9,6 +9,8 @@ class Context
 
     private $_user;
 
+    private $_dbConnection;
+
     private static $_instance;
 
     private function __construct()
@@ -77,4 +79,22 @@ class Context
     {
         $this->_user = $user;
     }
+
+    /**
+     * @return DbConnection
+     */
+    public function getDbConnection()
+    {
+        return $this->_dbConnection;
+    }
+
+    /**
+     * @param mixed $dbConnection
+     */
+    public function setDbConnection(DbConnection $dbConnection): void
+    {
+        $this->_dbConnection = $dbConnection;
+    }
+
+
 }

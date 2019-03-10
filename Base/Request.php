@@ -87,4 +87,14 @@ class Request
     {
         return $this->_requestUri;
     }
+
+    public function getIp()
+    {
+        return $_SERVER['REMOTE_ADDR'];
+    }
+
+    public function getUserAgent()
+    {
+        return $_SERVER['HTTP_USER_AGENT'];
+    }
 }

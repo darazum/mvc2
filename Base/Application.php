@@ -1,6 +1,8 @@
 <?php
 namespace Base;
 
+use Base\Model\Factory;
+
 class Application
 {
     private $_config;
@@ -16,23 +18,53 @@ class Application
         $this->_config = $config;
     }
 
-    private function _init()
+    public function init()
     {
         // это глобальный контекст приложения доступный везде
         $this->_context = Context::getInstance();
+
+        // подгружаем конфиг
+        $dotenv = \Dotenv\Dotenv::create(__DIR__ . '/../');
+        $dotenv->load();
+
+        define('PRODUCTION', getenv('PRODUCTION'));
+
+        // создаем объект подключения к БД
+        $this->_context->setDbConnection(
+            DbConnection::instance()
+        );
+
+        // это объект запроса, содержит все данные которые пришли от пользователя
+        $this->_request = new Request();
+
+        // помещаем его в контекст, он нам еще пригодится
+        $this->_context->setRequest($this->_request);
+
+        $this->_initUser();
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function _initUser()
+    {
+        $session = Session::instance();
+        $userId = $session->getUserId();
+        if ($userId) { // проверили что в сессии есть user_id
+            if ($session->check()) { // проверили что ip и user-agent не изменился
+                $user = Factory::getById(Factory::MODEL_USER, __METHOD__, $userId);
+                if ($user) {
+                    $this->_context->setUser($user);
+                }
+            }
+        }
     }
 
     public function run()
     {
         try {
             // инициализируем приложение
-            $this->_init();
-
-            // это объект запроса, содержит все данные которые пришли от пользователя
-            $this->_request = new Request();
-
-            // помещаем его в контекст, он нам еще пригодится
-            $this->_context->setRequest($this->_request);
+            $this->init();
 
             // обрабатываем пользовательский запрос
             $this->_request->handle();
@@ -56,22 +88,33 @@ class Application
                 );
             }
 
-
             // создаем view
             $view = new View($this->_getDefaultTemplatePath());
 
             // передаем созданный объект view в контроллер (теперь мы из контроллера можем им управлять)
             $controller->view = $view;
 
+            // добвляем пользователя
+            $user = Context::getInstance()->getUser();
+            if ($user) {
+                $controller->setUser($user);
+            }
+
             // вызываем экшен
+            $controller->preAction();
             $controller->$action();
 
             // рендерим контент
             if ($controller->needRender()) {
                 $content = $view->render($controller->tpl);
                 echo $content;
-            }
 
+                if (!PRODUCTION) {
+                    echo $this->_context->getDbConnection()->getLog();
+                }
+            }
+        } catch (RedirectException $e) {
+            header('Location: ' . $e->getLocation());
         } catch (DispatchException $e) {
             $e->process();
             // обработка исключений в диспетчере
