@@ -1,14 +1,19 @@
 {
 
   "require": {
-    "swiftmailer/swiftmailer": "^6.0",
-    "phpmailer/phpmailer": "^6.0",
-    "twig/twig":"^2.0",
+    "swiftmailer/swiftmailer": "dev-master",
+    "phpmailer/phpmailer": "dev-master",
+    "twig/twig":"^2.9.0",
     "symfony/dom-crawler":"dev-master",
-    "symfony/filesystem":"^3.4",
-    "nesbot/carbon":"dev-master",
+    "symfony/filesystem":"dev-master",
     "symfony/css-selector":"dev-master",
-    "vlucas/phpdotenv":"dev-master"
+    "vlucas/phpdotenv":"dev-master",
+
+    "wixel/gump": "dev-master",
+    "intervention/image":"dev-master",
+    "phpunit/phpunit": "dev-master",
+    "illuminate/database": "^5.6",
+    "fzaninotto/faker": "dev-master"
   },
 
   "autoload": {

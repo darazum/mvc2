@@ -4,7 +4,7 @@ require_once '../vendor/autoload.php';
 try {
 
 // Create the Transport
-    $transport = (new Swift_SmtpTransport(' smtp.mail.ru', 465, 'ssl'))
+    $transport = (new Swift_SmtpTransport('smtp.mail.ru', 465, 'ssl'))
         ->setUsername('loftschool.darazum@mail.ru')
         ->setPassword('loftschool123')
     ;
@@ -17,6 +17,7 @@ try {
         ->setFrom(['loftschool.darazum@mail.ru' => 'loftschool.darazum@mail.ru'])
         ->setTo(['darazum@mail.ru'])
         ->setBody('Here is the message itself')
+        ->attach(Swift_Attachment::fromPath('test.php'))
     ;
 
 // Send the message
